@@ -1,0 +1,4 @@
+
+pytest      #testing framework
+ruff        #quality checker
+python-dotenv   #load environment variables from .env file
