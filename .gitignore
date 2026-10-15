@@ -9,5 +9,5 @@ logs/
 data/*
 !data/.gitkeep
 *.log
- GitHub_Link.txt
- project_structure.txt
+GitHub_Link.txt
+project_structure.txt
