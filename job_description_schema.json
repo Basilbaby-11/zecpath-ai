@@ -1,0 +1,416 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://zecpath.example/schemas/job-description.schema.json",
+  "title": "Zecpath Job Description Data",
+  "description": "Validates structured job-description data extracted from a vacancy. Example values belong in a separate JSON instance file.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "job_id",
+    "source_document",
+    "title",
+    "department",
+    "employment_type",
+    "workplace_type",
+    "location",
+    "summary",
+    "responsibilities",
+    "skills",
+    "experience_requirements",
+    "education_requirements",
+    "certification_requirements",
+    "language_requirements",
+    "compensation",
+    "application_instructions",
+    "metadata"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "job_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_document": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "document_id",
+        "file_name",
+        "file_type",
+        "language"
+      ],
+      "properties": {
+        "document_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "file_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "file_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "language": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "department": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "company": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "employment_type": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "full_time",
+        "part_time",
+        "contract",
+        "internship",
+        "freelance",
+        "temporary",
+        "other",
+        null
+      ]
+    },
+    "workplace_type": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "on_site",
+        "remote",
+        "hybrid",
+        "other",
+        null
+      ]
+    },
+    "location": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "city",
+        "region",
+        "country"
+      ],
+      "properties": {
+        "city": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "region": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "country": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "summary": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "responsibilities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "skills": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "category",
+          "requirement_type",
+          "minimum_proficiency",
+          "minimum_years",
+          "evidence",
+          "confidence"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "programming_language",
+              "framework",
+              "tool",
+              "domain",
+              "soft_skill",
+              "other"
+            ]
+          },
+          "requirement_type": {
+            "type": "string",
+            "enum": [
+              "required",
+              "preferred"
+            ]
+          },
+          "minimum_proficiency": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "minimum_years": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "evidence": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "confidence": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 1
+          }
+        }
+      }
+    },
+    "experience_requirements": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "minimum_months",
+        "maximum_months",
+        "experience_level"
+      ],
+      "properties": {
+        "minimum_months": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "maximum_months": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "experience_level": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "internship",
+            "entry_level",
+            "junior",
+            "mid_level",
+            "senior",
+            "lead",
+            "executive",
+            "other",
+            null
+          ]
+        }
+      }
+    },
+    "education_requirements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "qualification",
+          "field_of_study",
+          "mandatory"
+        ],
+        "properties": {
+          "qualification": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "field_of_study": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "mandatory": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "certification_requirements": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "language_requirements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "proficiency",
+          "mandatory"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "proficiency": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "mandatory": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "compensation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "minimum",
+        "maximum",
+        "currency",
+        "period"
+      ],
+      "properties": {
+        "minimum": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "maximum": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "currency": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "period": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "hour",
+            "month",
+            "year",
+            "project",
+            "other",
+            null
+          ]
+        }
+      }
+    },
+    "application_instructions": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "extracted_at",
+        "parser_version",
+        "overall_confidence",
+        "review_status"
+      ],
+      "properties": {
+        "extracted_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "parser_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "overall_confidence": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "review_status": {
+          "type": "string",
+          "enum": [
+            "pending_review",
+            "approved",
+            "needs_review",
+            "rejected"
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,530 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://zecpath.example/schemas/resume.schema.json",
+  "title": "Zecpath Resume Data",
+  "description": "Validates structured candidate data extracted from a resume. Example values belong in a separate JSON instance file.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "candidate_id",
+    "source_document",
+    "candidate",
+    "skills",
+    "experience",
+    "education",
+    "certifications",
+    "languages",
+    "metadata"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "candidate_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_document": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "document_id",
+        "file_name",
+        "file_type",
+        "language"
+      ],
+      "properties": {
+        "document_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "file_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "file_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "language": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "full_name",
+        "email",
+        "phone",
+        "location",
+        "professional_summary"
+      ],
+      "properties": {
+        "full_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "email": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "email"
+        },
+        "phone": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "location": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "city",
+            "region",
+            "country"
+          ],
+          "properties": {
+            "city": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "region": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "country": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        },
+        "professional_summary": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "skills": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/skill"
+      }
+    },
+    "experience": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/experience"
+      }
+    },
+    "education": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/education"
+      }
+    },
+    "certifications": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/certification"
+      }
+    },
+    "languages": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/language"
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "extracted_at",
+        "parser_version",
+        "overall_confidence",
+        "review_status"
+      ],
+      "properties": {
+        "extracted_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "parser_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "overall_confidence": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "review_status": {
+          "type": "string",
+          "enum": [
+            "pending_review",
+            "approved",
+            "needs_review",
+            "rejected"
+          ]
+        }
+      }
+    }
+  },
+  "$defs": {
+    "skill": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "skill_id",
+        "name",
+        "category",
+        "proficiency",
+        "years_experience",
+        "evidence",
+        "confidence"
+      ],
+      "properties": {
+        "skill_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "category": {
+          "type": "string",
+          "enum": [
+            "programming_language",
+            "framework",
+            "tool",
+            "domain",
+            "soft_skill",
+            "other"
+          ]
+        },
+        "proficiency": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "years_experience": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "evidence": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confidence": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "experience": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "experience_id",
+        "employer",
+        "designation",
+        "employment_type",
+        "start_date",
+        "end_date",
+        "is_current",
+        "description",
+        "skills_used",
+        "achievements",
+        "source_text",
+        "confidence"
+      ],
+      "properties": {
+        "experience_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "employer": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "designation": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "employment_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "full_time",
+            "part_time",
+            "contract",
+            "internship",
+            "freelance",
+            "other",
+            null
+          ]
+        },
+        "start_date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^\\d{4}(-\\d{2}(-\\d{2})?)?$"
+        },
+        "end_date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^\\d{4}(-\\d{2}(-\\d{2})?)?$"
+        },
+        "is_current": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "description": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "skills_used": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "achievements": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "source_text": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confidence": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "education": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "education_id",
+        "institution",
+        "qualification",
+        "field_of_study",
+        "start_year",
+        "end_year",
+        "grade",
+        "grade_scale",
+        "confidence"
+      ],
+      "properties": {
+        "education_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "institution": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "qualification": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "field_of_study": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "start_year": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1900,
+          "maximum": 2100
+        },
+        "end_year": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1900,
+          "maximum": 2100
+        },
+        "grade": {
+          "type": [
+            "string",
+            "number",
+            "null"
+          ]
+        },
+        "grade_scale": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confidence": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "certification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "issuer",
+        "issue_date",
+        "expiry_date",
+        "credential_id",
+        "credential_url",
+        "confidence"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "issuer": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "issue_date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^\\d{4}(-\\d{2}(-\\d{2})?)?$"
+        },
+        "expiry_date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^\\d{4}(-\\d{2}(-\\d{2})?)?$"
+        },
+        "credential_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "credential_url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uri"
+        },
+        "confidence": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "language": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "proficiency",
+        "confidence"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "proficiency": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confidence": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    }
+  }
+}
