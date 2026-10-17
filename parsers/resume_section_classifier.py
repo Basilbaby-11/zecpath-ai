@@ -1,7 +1,6 @@
 """Rule-based and lightweight NLP-assisted resume section segmentation.
 
-This module consumes extracted text; it deliberately does not replace the Day 5
-PDF/DOCX/OCR extractor. It returns section-level text plus per-block labels.
+This module consumes extracted text. It returns section-level text plus per-block labels.
 """
 from __future__ import annotations
 
