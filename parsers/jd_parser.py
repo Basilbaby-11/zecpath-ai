@@ -3,6 +3,8 @@
 
 import re
 import json
+import argparse
+import hashlib
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -564,3 +566,142 @@ def validate_against_schema(
         schema = json.load(schema_file)
 
     validate(instance=parsed_data, schema=schema)
+
+def generate_job_id(file_path: str | Path, input_dir: str | Path | None = None) -> str:
+    """Generate a stable, distinct job ID from a JD file's relative path.
+
+    The ID stays the same across reruns as long as the file path remains the same.
+    Different files in the input directory receive different IDs.
+    """
+    path = Path(file_path)
+    if input_dir is not None:
+        try:
+            identity = path.resolve().relative_to(Path(input_dir).resolve()).as_posix()
+        except ValueError:
+            identity = path.name
+    else:
+        identity = path.name
+
+    slug = re.sub(r"[^a-zA-Z0-9]+", "_", path.stem).strip("_").lower()
+    slug = (slug[:40] or "job")
+    suffix = hashlib.sha256(identity.lower().encode("utf-8")).hexdigest()[:10]
+    return f"job_{slug}_{suffix}"
+
+
+def process_jd_file(
+    file_path: str | Path,
+    input_dir: str | Path | None = None,
+) -> dict[str, Any]:
+    """Read and parse one .txt job-description file."""
+    path = Path(file_path)
+    raw_text = path.read_text(encoding="utf-8-sig")
+    job_id = generate_job_id(path, input_dir=input_dir)
+    document_id = "doc_" + job_id.removeprefix("job_")
+
+    return parse_job_description(
+        raw_text=raw_text,
+        file_name=path.name,
+        document_id=document_id,
+        job_id=job_id,
+    )
+
+
+def process_directory(
+    input_dir: str | Path = "data/job_descriptions",
+    output_dir: str | Path = "data/parsed_job_descriptions",
+) -> dict[str, Any]:
+    """Parse all .txt JD files in a folder and save one JSON per JD.
+
+    Also writes a combined JSON file containing all parsed job descriptions.
+    """
+    input_path = Path(input_dir)
+    output_path = Path(output_dir)
+
+    if not input_path.exists():
+        raise FileNotFoundError(f"Input directory does not exist: {input_path}")
+    if not input_path.is_dir():
+        raise NotADirectoryError(f"Input path is not a directory: {input_path}")
+
+    jd_files = sorted(
+        path for path in input_path.glob("*.txt")
+        if path.is_file()
+    )
+    if not jd_files:
+        raise FileNotFoundError(
+            f"No .txt job description files found in: {input_path}"
+        )
+
+    output_path.mkdir(parents=True, exist_ok=True)
+    results = []
+    failures = []
+
+    for file_path in jd_files:
+        try:
+            parsed = process_jd_file(file_path, input_dir=input_path)
+            output_file = output_path / f"{parsed['job_id']}.json"
+            output_file.write_text(
+                json.dumps(parsed, indent=2, ensure_ascii=False),
+                encoding="utf-8",
+            )
+            results.append({
+                "file_name": file_path.name,
+                "job_id": parsed["job_id"],
+                "title": parsed["title"],
+                "output_file": str(output_file),
+                "status": "success",
+            })
+            print(f"[OK] {file_path.name} -> {parsed['job_id']}")
+        except Exception as exc:
+            failures.append({
+                "file_name": file_path.name,
+                "error": str(exc),
+                "status": "failed",
+            })
+            print(f"[FAILED] {file_path.name}: {exc}")
+
+    combined_path = output_path / "all_parsed_job_descriptions.json"
+    combined_path.write_text(
+        json.dumps(
+            [
+                json.loads((output_path / f"{item['job_id']}.json").read_text(encoding="utf-8"))
+                for item in results
+            ],
+            indent=2,
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+
+    summary = {
+        "total_files": len(jd_files),
+        "successful": len(results),
+        "failed": len(failures),
+        "results": results,
+        "failures": failures,
+        "combined_output": str(combined_path),
+    }
+    return summary
+
+
+def main() -> None:
+    """Command-line entry point for batch parsing JD .txt files."""
+    parser = argparse.ArgumentParser(
+        description="Parse multiple job-description .txt files into JSON."
+    )
+    parser.add_argument(
+        "--input-dir",
+        default="data/sample_jd",
+        help="Folder containing JD .txt files (default: data/job_descriptions)",
+    )
+    parser.add_argument(
+        "--output-dir",
+        default="data/parsed_job_descriptions",
+        help="Folder for parsed JSON files (default: data/parsed_job_descriptions)",
+    )
+    args = parser.parse_args()
+    process_directory(args.input_dir, args.output_dir)
+
+
+if __name__ == "__main__":
+    main()
+
