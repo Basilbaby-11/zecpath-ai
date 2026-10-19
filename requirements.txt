@@ -7,3 +7,4 @@ pytesseract # optical character recognition (OCR) tool for extracting text from 
 pillow # Python Imaging Library (PIL) fork for image processing
 pdf2image # convert PDF files to images
 PyMuPDF # extract text and images from PDF files
+spacy # NLP library for text processing and entity recognition
