@@ -8,3 +8,4 @@ pillow # Python Imaging Library (PIL) fork for image processing
 pdf2image # convert PDF files to images
 PyMuPDF # extract text and images from PDF files
 spacy # NLP library for text processing and entity recognition
+scikit-learn # machine learning library for Python
