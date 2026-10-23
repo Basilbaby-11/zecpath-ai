@@ -1,0 +1,22 @@
+{
+  "default": {
+    "skill_match": 0.35,
+    "experience_relevance": 0.25,
+    "education_alignment": 0.15,
+    "semantic_similarity": 0.25
+  },
+  "roles": {
+    "AI Engineer": {
+      "skill_match": 0.4,
+      "experience_relevance": 0.2,
+      "education_alignment": 0.15,
+      "semantic_similarity": 0.25
+    },
+    "Python Developer": {
+      "skill_match": 0.35,
+      "experience_relevance": 0.3,
+      "education_alignment": 0.1,
+      "semantic_similarity": 0.25
+    }
+  }
+}
