@@ -3,8 +3,8 @@
 From the repository root:
     python scripts/run_semantic_matching_batch.py
 
-Optional custom paths:
-    python scripts/run_semantic_matching_batch.py --resume-dir data/combined_resume_outputs --jd-dir data/parsed_job_descriptions --output-dir data/semantic_matching_outputs
+Optional custom paths (use either --jd-dir or --jd-file):
+    python scripts/run_semantic_matching_batch.py --resume-dir data/combined_resume_outputs --jd-file data/parsed_job_descriptions/all_parsed_job_descriptions.json --output-dir data/semantic_matching_outputs
 """
 from __future__ import annotations
 
@@ -81,7 +81,8 @@ def stable_id(record: dict[str, Any], keys: tuple[str, ...], fallback: str) -> s
 def main() -> int:
     parser = argparse.ArgumentParser(description="Batch semantic matching for resume and JD JSON folders.")
     parser.add_argument("--resume-dir", default="data/combined_resume_outputs", help="Folder containing combined resume JSON files")
-    parser.add_argument("--jd-dir", default="data/parsed_job_descriptions", help="Folder containing parsed JD JSON files")
+    parser.add_argument("--jd-dir", default="data/parsed_job_descriptions", help="Folder containing parsed JD JSON files (used when --jd-file is not provided)")
+    parser.add_argument("--jd-file", help="Path to one JSON file containing the combined job description records; overrides --jd-dir")
     parser.add_argument("--output-dir", default="data/semantic_matching_outputs", help="Folder for matching result JSON files")
     parser.add_argument("--strong-threshold", type=float, default=0.75)
     parser.add_argument("--moderate-threshold", type=float, default=0.55)
@@ -92,9 +93,19 @@ def main() -> int:
         return path if path.is_absolute() else ROOT / path
 
     resume_dir, jd_dir, output_dir = map(resolve, (args.resume_dir, args.jd_dir, args.output_dir))
+    jd_file = resolve(args.jd_file) if args.jd_file else None
     try:
         resumes = collect_records(resume_dir)
-        jobs = collect_records(jd_dir)
+        if jd_file is not None:
+            if not jd_file.is_file():
+                raise FileNotFoundError(f"JD JSON file does not exist: {jd_file}")
+            jobs = read_json_records(jd_file)
+            if not jobs:
+                raise FileNotFoundError(f"No job description records could be read from: {jd_file}")
+            for index, record in enumerate(jobs, start=1):
+                record.setdefault("_record_index", index)
+        else:
+            jobs = collect_records(jd_dir)
     except FileNotFoundError as exc:
         print(f"[ERROR] {exc}", file=sys.stderr)
         return 2
@@ -161,3 +172,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+    
