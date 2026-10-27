@@ -9,3 +9,8 @@ pdf2image # convert PDF files to images
 PyMuPDF # extract text and images from PDF files
 spacy # NLP library for text processing and entity recognition
 scikit-learn # machine learning library for Python
+fastapi>=0.115,<1.0
+uvicorn[standard]>=0.30,<1.0
+python-multipart>=0.0.9
+pydantic>=2.7,<3.0
+httpx>=0.27
