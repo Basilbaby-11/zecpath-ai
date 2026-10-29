@@ -1,0 +1,30 @@
+{
+  "evaluation_type": "synthetic_functional_test_fixture",
+  "environment": "Linux / Python 3.13.5 / pytest 9.0.2",
+  "focused_test_run": {
+    "command": "python -m pytest tests/test_day17_system_testing.py tests/test_day16_api_integration.py -v",
+    "day17_tests_passed": 13,
+    "day17_tests_failed": 0,
+    "day16_regression_tests_passed": 3,
+    "combined_tests_passed": 16,
+    "combined_tests_failed": 0,
+    "synthetic_scenario_mismatches": 0
+  },
+  "full_suite_run": {
+    "command": "python -m pytest -q",
+    "tests_passed": 96,
+    "tests_failed": 0,
+    "collection_errors": 0,
+    "status": "passed"
+  },
+  "production_accuracy_claim": false,
+  "real_resume_job_pairs": 0,
+  "labelled_synthetic_scenarios": 8,
+  "real_world_metrics": {
+    "precision": null,
+    "recall": null,
+    "f1_score": null,
+    "confusion_matrix": null
+  },
+  "note": "The focused and full-suite results validate functional/regression behavior. The separate synthetic evaluation report calculates metrics only for eight synthetic labelled pairs. Real-world ATS precision, recall, and F1 require representative anonymized resume/job pairs independently reviewed by humans."
+}

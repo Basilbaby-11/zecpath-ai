@@ -1,0 +1,17 @@
+{
+  "label_definition": "suitable is positive; ATS shortlisted is positive prediction; review/rejected count as not shortlisted",
+  "evaluated_pairs": 8,
+  "excluded_unlabelled_or_invalid_pairs": 0,
+  "confusion_matrix": {
+    "true_positive": 4,
+    "false_positive": 1,
+    "true_negative": 2,
+    "false_negative": 1
+  },
+  "precision": 0.8,
+  "recall": 0.8,
+  "f1_score": 0.8,
+  "input_file": "data\\day17_evaluation\\synthetic_labelled_resume_job_pairs.csv",
+  "production_accuracy_claim": false,
+  "note": "Metrics only describe the supplied labelled dataset. Synthetic fixture metrics must not be presented as real-world ATS accuracy."
+}
