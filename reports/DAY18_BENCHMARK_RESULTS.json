@@ -1,0 +1,217 @@
+{
+  "benchmark_type": "local_resume_extraction_microbenchmark",
+  "generated_at_utc": "2026-10-29T18:51:32.560206+00:00",
+  "python_version": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+  "input_directory": "E:\\INTERNSHIP PROJECT\\zecpath-ai\\data\\sample_resumes",
+  "iterations_per_file": 3,
+  "files_tested": 20,
+  "successful_files": 20,
+  "failed_files": 0,
+  "results": [
+    {
+      "file": "resume_01_aarav_menon.docx",
+      "status": "success",
+      "iterations": 3,
+      "latency_seconds_median": 0.071,
+      "latency_seconds_min": 0.0596,
+      "peak_traced_memory_mb": 8.155,
+      "word_count": 291,
+      "error": null
+    },
+    {
+      "file": "resume_01_aarav_menon.pdf",
+      "status": "success",
+      "iterations": 3,
+      "latency_seconds_median": 0.6752,
+      "latency_seconds_min": 0.6581,
+      "peak_traced_memory_mb": 11.746,
+      "word_count": 304,
+      "error": null
+    },
+    {
+      "file": "resume_02_diya_nair.docx",
+      "status": "success",
+      "iterations": 3,
+      "latency_seconds_median": 0.0431,
+      "latency_seconds_min": 0.0418,
+      "peak_traced_memory_mb": 2.183,
+      "word_count": 267,
+      "error": null
+    },
+    {
+      "file": "resume_02_diya_nair.pdf",
+      "status": "success",
+      "iterations": 3,
+      "latency_seconds_median": 0.6321,
+      "latency_seconds_min": 0.5787,
+      "peak_traced_memory_mb": 4.008,
+      "word_count": 280,
+      "error": null
+    },
+    {
+      "file": "resume_03_rahul_varma.docx",
+      "status": "success",
+      "iterations": 3,
+      "latency_seconds_median": 0.1274,
+      "latency_seconds_min": 0.0705,
+      "peak_traced_memory_mb": 2.183,
+      "word_count": 277,
+      "error": null
+    },
+    {
+      "file": "resume_03_rahul_varma.pdf",
+      "status": "success",
+      "iterations": 3,
+      "latency_seconds_median": 0.7176,
+      "latency_seconds_min": 0.6454,
+      "peak_traced_memory_mb": 4.357,
+      "word_count": 290,
+      "error": null
+    },
+    {
+      "file": "resume_04_ananya_thomas.docx",
+      "status": "success",
+      "iterations": 3,
+      "latency_seconds_median": 0.0377,
+      "latency_seconds_min": 0.0301,
+      "peak_traced_memory_mb": 2.183,
+      "word_count": 261,
+      "error": null
+    },
+    {
+      "file": "resume_04_ananya_thomas.pdf",
+      "status": "success",
+      "iterations": 3,
+      "latency_seconds_median": 0.6301,
+      "latency_seconds_min": 0.5976,
+      "peak_traced_memory_mb": 3.851,
+      "word_count": 274,
+      "error": null
+    },
+    {
+      "file": "resume_05_ishan_joseph.docx",
+      "status": "success",
+      "iterations": 3,
+      "latency_seconds_median": 0.0493,
+      "latency_seconds_min": 0.045,
+      "peak_traced_memory_mb": 2.183,
+      "word_count": 256,
+      "error": null
+    },
+    {
+      "file": "resume_05_ishan_joseph.pdf",
+      "status": "success",
+      "iterations": 3,
+      "latency_seconds_median": 1.1495,
+      "latency_seconds_min": 1.0811,
+      "peak_traced_memory_mb": 3.851,
+      "word_count": 269,
+      "error": null
+    },
+    {
+      "file": "resume_06_meera_pillai.docx",
+      "status": "success",
+      "iterations": 3,
+      "latency_seconds_median": 0.0531,
+      "latency_seconds_min": 0.0515,
+      "peak_traced_memory_mb": 2.183,
+      "word_count": 270,
+      "error": null
+    },
+    {
+      "file": "resume_06_meera_pillai.pdf",
+      "status": "success",
+      "iterations": 3,
+      "latency_seconds_median": 0.9054,
+      "latency_seconds_min": 0.8527,
+      "peak_traced_memory_mb": 4.09,
+      "word_count": 283,
+      "error": null
+    },
+    {
+      "file": "resume_07_aditya_rao.docx",
+      "status": "success",
+      "iterations": 3,
+      "latency_seconds_median": 0.2123,
+      "latency_seconds_min": 0.2028,
+      "peak_traced_memory_mb": 2.183,
+      "word_count": 248,
+      "error": null
+    },
+    {
+      "file": "resume_07_aditya_rao.pdf",
+      "status": "success",
+      "iterations": 3,
+      "latency_seconds_median": 1.3816,
+      "latency_seconds_min": 0.6915,
+      "peak_traced_memory_mb": 3.754,
+      "word_count": 260,
+      "error": null
+    },
+    {
+      "file": "resume_08_nisha_george.docx",
+      "status": "success",
+      "iterations": 3,
+      "latency_seconds_median": 0.0937,
+      "latency_seconds_min": 0.0441,
+      "peak_traced_memory_mb": 2.183,
+      "word_count": 271,
+      "error": null
+    },
+    {
+      "file": "resume_08_nisha_george.pdf",
+      "status": "success",
+      "iterations": 3,
+      "latency_seconds_median": 1.0087,
+      "latency_seconds_min": 0.8443,
+      "peak_traced_memory_mb": 3.979,
+      "word_count": 284,
+      "error": null
+    },
+    {
+      "file": "resume_09_vivek_das.docx",
+      "status": "success",
+      "iterations": 3,
+      "latency_seconds_median": 0.0559,
+      "latency_seconds_min": 0.0463,
+      "peak_traced_memory_mb": 2.183,
+      "word_count": 258,
+      "error": null
+    },
+    {
+      "file": "resume_09_vivek_das.pdf",
+      "status": "success",
+      "iterations": 3,
+      "latency_seconds_median": 0.8038,
+      "latency_seconds_min": 0.791,
+      "peak_traced_memory_mb": 3.797,
+      "word_count": 271,
+      "error": null
+    },
+    {
+      "file": "resume_10_sara_mathew.docx",
+      "status": "success",
+      "iterations": 3,
+      "latency_seconds_median": 0.0503,
+      "latency_seconds_min": 0.0503,
+      "peak_traced_memory_mb": 2.183,
+      "word_count": 287,
+      "error": null
+    },
+    {
+      "file": "resume_10_sara_mathew.pdf",
+      "status": "success",
+      "iterations": 3,
+      "latency_seconds_median": 1.1853,
+      "latency_seconds_min": 0.9118,
+      "peak_traced_memory_mb": 4.146,
+      "word_count": 301,
+      "error": null
+    }
+  ],
+  "limitations": [
+    "Results depend on this machine and input files.",
+    "tracemalloc reports Python-tracked allocations, not total process RSS.",
+    "No baseline comparison is available unless the same inputs are benchmarked against the previous revision."
+  ]
+}
