@@ -93,45 +93,143 @@ class SemanticMatchingEngine:
                     "moderate" if score >= self.moderate_threshold else "weak")
         return {"score": score, "category": category, "status": "scored"}
 
+    
     def compare(self, resume: dict[str, Any], job_description: dict[str, Any],
                 resume_id: str | None = None, job_id: str | None = None) -> dict[str, Any]:
-        """Return section-level and overall semantic scores from structured data.
+        """Return section-level and overall semantic scores using one batch."""
 
-        Accepted aliases are deliberately permissive to support outputs from
-        existing parsers: skills/required_skills, experience/experience_summary,
-        and projects/project_descriptions.
-        """
-        resume_skills = resume.get("skills", resume.get("technical_skills", []))
-        job_skills = job_description.get("required_skills", job_description.get("skills", []))
-        resume_experience = resume.get("experience_summary", resume.get("experience", []))
-        job_experience = job_description.get("experience_summary", job_description.get("responsibilities", []))
-        resume_projects = resume.get("project_descriptions", resume.get("projects", []))
-        job_projects = job_description.get("project_descriptions", job_description.get("relevant_projects", []))
-        resume_overall = resume.get("professional_summary", "")
-        resume_overall = " ".join(x for x in [_text(resume_overall), _text(resume_skills),
-                                               _text(resume_experience), _text(resume_projects)] if x)
-        job_overall = " ".join(x for x in [_text(job_description.get("title", job_description.get("role", ""))),
-                                           _text(job_description.get("description", "")), _text(job_skills),
-                                           _text(job_experience), _text(job_projects)] if x)
+        resume_skills = resume.get(
+            "skills", resume.get("technical_skills", [])
+        )
+        job_skills = job_description.get(
+            "required_skills", job_description.get("skills", [])
+        )
+
+        resume_experience = resume.get(
+            "experience_summary", resume.get("experience", [])
+        )
+        job_experience = job_description.get(
+            "experience_summary", job_description.get("responsibilities", [])
+        )
+
+        resume_projects = resume.get(
+            "project_descriptions", resume.get("projects", [])
+        )
+        job_projects = job_description.get(
+            "project_descriptions", job_description.get("relevant_projects", [])
+        )
+
+        resume_overall = " ".join(
+            part for part in [
+                _text(resume.get("professional_summary", "")),
+                _text(resume_skills),
+                _text(resume_experience),
+                _text(resume_projects),
+            ] if part
+        )
+
+        job_overall = " ".join(
+            part for part in [
+                _text(job_description.get("title", job_description.get("role", ""))),
+                _text(job_description.get("description", "")),
+                _text(job_skills),
+                _text(job_experience),
+                _text(job_projects),
+            ] if part
+        )
+
         section_inputs = {
             "skills": (resume_skills, job_skills),
             "experience": (resume_experience, job_experience),
             "projects": (resume_projects, job_projects),
             "overall": (resume_overall, job_overall),
         }
-        section_scores = {name: self._score_pair(a, b) for name, (a, b) in section_inputs.items()}
-        available = [v["score"] for v in section_scores.values() if v["status"] == "scored"]
-        overall = round(sum(available) / len(available), 4) if available else 0.0
-        category = ("strong" if overall >= self.strong_threshold else
-                    "moderate" if overall >= self.moderate_threshold else "weak") if available else "insufficient_data"
+
+        section_scores: dict[str, dict[str, Any]] = {}
+        batch_texts: list[str] = []
+        batch_names: list[str] = []
+
+        # Collect all valid pairs before calling the encoder.
+        for name, (resume_part, job_part) in section_inputs.items():
+            resume_text = _text(resume_part)
+            job_text = _text(job_part)
+
+            if not resume_text or not job_text:
+                section_scores[name] = {
+                    "score": 0.0,
+                    "status": "insufficient_data",
+                }
+                continue
+
+            batch_names.append(name)
+            batch_texts.extend([resume_text, job_text])
+
+        # Encode every valid section pair in one call.
+        if batch_texts:
+            vectors = self._embed(batch_texts)
+
+            for index, name in enumerate(batch_names):
+                score = _cosine(
+                    vectors[index * 2],
+                    vectors[index * 2 + 1],
+                )
+
+                category = (
+                    "strong"
+                    if score >= self.strong_threshold
+                    else "moderate"
+                    if score >= self.moderate_threshold
+                    else "weak"
+                )
+
+                section_scores[name] = {
+                    "score": score,
+                    "category": category,
+                    "status": "scored",
+                }
+
+        available = [
+            result["score"]
+            for result in section_scores.values()
+            if result["status"] == "scored"
+        ]
+
+        overall = (
+            round(sum(available) / len(available), 4)
+            if available else 0.0
+        )
+
+        if not available:
+            overall_category = "insufficient_data"
+        elif overall >= self.strong_threshold:
+            overall_category = "strong"
+        elif overall >= self.moderate_threshold:
+            overall_category = "moderate"
+        else:
+            overall_category = "weak"
+
         return {
             "engine_version": ENGINE_VERSION,
-            "resume_id": resume_id or resume.get("resume_id") or resume.get("candidate_id"),
-            "job_id": job_id or job_description.get("job_id") or job_description.get("jd_id"),
+            "resume_id": (
+                resume_id
+                or resume.get("resume_id")
+                or resume.get("candidate_id")
+            ),
+            "job_id": (
+                job_id
+                or job_description.get("job_id")
+                or job_description.get("jd_id")
+            ),
             "method": "sentence_transformer_embeddings_cosine_similarity",
             "similarity_scores": section_scores,
             "overall_score": overall,
-            "overall_category": category,
-            "thresholds": {"moderate": self.moderate_threshold, "strong": self.strong_threshold},
-            "disclaimer": "Similarity is a ranking signal, not a hiring probability or sole hiring criterion.",
+            "overall_category": overall_category,
+            "thresholds": {
+                "moderate": self.moderate_threshold,
+                "strong": self.strong_threshold,
+            },
+            "disclaimer": (
+                "Similarity is a ranking signal, not a hiring probability "
+                "or sole hiring criterion."
+            ),
         }

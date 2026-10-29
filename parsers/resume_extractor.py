@@ -9,6 +9,7 @@ from pathlib import Path
 ROOT_DIR = Path(__file__).resolve().parent.parent
 INPUT_DIR = ROOT_DIR / "data" / "sample_resumes"
 OUTPUT_DIR = ROOT_DIR / "data" / "extracted_resumes"
+TEXT_DIR = OUTPUT_DIR
 LOG_DIR = ROOT_DIR / "logs"
 
 for folder in (INPUT_DIR, OUTPUT_DIR, LOG_DIR):
@@ -121,6 +122,14 @@ def ocr_fallback(path: Path) -> str:
                 except (UnidentifiedImageError, OSError):
                     logging.warning("Could not OCR embedded image %s in %s", name, path.name)
     return "\n".join(chunks)
+
+def normalize_heading(line: str) -> str:
+    """Return a canonical section label for a common resume heading."""
+    value = re.sub(r"[\s:：|]+$", "", line.strip().lower())
+    value = re.sub(r"\s+", " ", value).strip(" .#>*•-–—")
+    # Match the same heading variants used by the extractor's cleaning pass.
+    return HEADING_MAP.get(value, value.upper())
+
 
 def clean_text(text: str) -> str:
     text = text.replace("\r\n", "\n").replace("\r", "\n")
@@ -254,6 +263,65 @@ def extract_one(path: Path) -> dict:
             "phone": None,
             "skills": [],
         }
+
+def extract_resume(path: str | Path) -> dict:
+    """Extract text from a PDF/DOCX and return a stable testing/API payload.
+
+    This wrapper preserves the legacy extractor contract while reusing the
+    existing PDF, DOCX, cleaning, and OCR helpers.
+    """
+    source = Path(path)
+    if not source.exists():
+        raise FileNotFoundError(str(source))
+    suffix = source.suffix.lower()
+    if suffix not in {".pdf", ".docx"}:
+        raise ValueError("Only PDF and DOCX files are supported.")
+
+    if suffix == ".pdf":
+        raw = read_pdf(source)
+    else:
+        raw = read_docx(source)
+    extracted = clean_text(raw or "")
+    needs_ocr = len(extracted.strip()) < 20
+    if suffix == ".docx":
+        # Embedded scan images may coexist with a short placeholder paragraph.
+        # OCR those images too instead of treating the placeholder as the resume.
+        from zipfile import ZipFile
+        try:
+            with ZipFile(source) as archive:
+                has_embedded_images = any(
+                    name.startswith("word/media/") and not name.endswith("/")
+                    for name in archive.namelist()
+                )
+        except Exception:
+            has_embedded_images = False
+        needs_ocr = needs_ocr or has_embedded_images
+    if needs_ocr:
+        ocr_text = clean_text(ocr_fallback(source))
+        if ocr_text:
+            extracted = "\n".join(part for part in (extracted, ocr_text) if part)
+    if not extracted.strip():
+        raise ValueError("No readable text found in the document.")
+
+    file_type = suffix[1:]
+    payload = {
+        "source_document": source.name,
+        "file_type": file_type,
+        "extraction_status": "success",
+        "extracted_text": extracted,
+        "word_count": len(extracted.split()),
+    }
+    # Persist text and metadata to the configured output folder. Tests and
+    # callers can override TEXT_DIR/OUTPUT_DIR without changing this function.
+    output_dir = Path(TEXT_DIR)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    stem = f"{source.stem}_{file_type}"
+    (output_dir / f"{stem}.txt").write_text(extracted + "\n", encoding="utf-8")
+    (Path(OUTPUT_DIR) / f"{stem}.json").parent.mkdir(parents=True, exist_ok=True)
+    metadata_path = Path(OUTPUT_DIR) / f"{stem}.json"
+    metadata_path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
+    return payload
+
 
 def process_directory() -> None:
     files = sorted(
