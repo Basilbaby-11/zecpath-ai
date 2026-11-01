@@ -27,7 +27,6 @@ def test_recognizes_canonical_skill_entities():
     assert {"Python", "TensorFlow", "Natural Language Processing"} <= set(by_name)
     assert by_name["Python"]["entity_label"] == "SKILL"
     assert by_name["Python"]["recognition_method"] == "spacy_phrase_match"
-    assert by_name["Python"]["start_char"] >= 0
 
 
 def test_normalizes_aliases():

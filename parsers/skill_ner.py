@@ -270,6 +270,7 @@ def extract_skill_entities(
             "entity_text": span.text,
             "entity_label": "SKILL",
             "confidence_score": confidence_score,
+            "recognition_method": "spacy_phrase_match",
             # Keep the existing 0-1 confidence field for API compatibility.
             "confidence": round(confidence_score / 100.0, 4),
             "score_breakdown": {

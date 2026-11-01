@@ -43,15 +43,82 @@ HEADING_MAP = {
 }
 
 def read_pdf(path: Path) -> str:
+    """Extract PDF text while preserving left-to-right column reading order."""
     import pdfplumber
+
     pages = []
     with pdfplumber.open(path) as pdf:
         for page in pdf.pages:
-            text = page.extract_text(layout=False)
+            words = page.extract_words(
+                x_tolerance=2, y_tolerance=3, keep_blank_chars=False
+            )
+            if not words:
+                continue
+
+            # Exclude the centered name/contact header from column detection.
+            body_words = [
+                w for w in words if w["top"] >= page.height * 0.12
+            ]
+
+            intervals = sorted(
+                (w["x0"], w["x1"]) for w in body_words
+            )
+            merged = []
+
+            for x0, x1 in intervals:
+                if merged and x0 - merged[-1][1] <= 8:
+                    merged[-1] = (
+                        merged[-1][0],
+                        max(merged[-1][1], x1)
+                    )
+                else:
+                    merged.append((x0, x1))
+
+            gaps = [
+                (
+                    merged[i + 1][0] - merged[i][1],
+                    merged[i][1],
+                    merged[i + 1][0],
+                )
+                for i in range(len(merged) - 1)
+            ]
+
+            largest_gap = max(gaps, default=(0, 0, 0))
+
+            # Detect two columns using the largest horizontal whitespace gap.
+            if largest_gap[0] >= page.width * 0.035:
+                split_x = (largest_gap[1] + largest_gap[2]) / 2
+                body_top = min(
+                    (w["top"] for w in body_words), default=0
+                )
+
+                header_text = page.crop(
+                    (0, 0, page.width, max(0, body_top - 1))
+                ).extract_text(layout=False)
+
+                left_text = page.crop(
+                    (0, body_top - 1, split_x, page.height)
+                ).extract_text(layout=False)
+
+                right_text = page.crop(
+                    (split_x, body_top - 1, page.width, page.height)
+                ).extract_text(layout=False)
+
+                ordered = [
+                    part.strip()
+                    for part in (header_text, left_text, right_text)
+                    if part and part.strip()
+                ]
+
+                text = "\n".join(ordered)
+            else:
+                # Keep the existing behavior for single-column PDFs.
+                text = page.extract_text(layout=False)
+
             if text and text.strip():
                 pages.append(text.strip())
-    return "\n".join(pages)
 
+    return "\n".join(pages)
 def read_docx(path: Path) -> str:
     from docx import Document
     from docx.oxml.text.paragraph import CT_P

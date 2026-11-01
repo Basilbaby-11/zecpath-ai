@@ -11,6 +11,7 @@ import argparse
 import json
 import re
 import sys
+import sys
 from itertools import combinations
 from pathlib import Path
 from datetime import date
@@ -153,13 +154,13 @@ def build_role_similarity(candidates: list[dict[str, Any]]) -> list[dict[str, An
     return comparisons
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--input-dir", type=Path, default=INPUT_DIR)
     parser.add_argument("--output-dir", type=Path, default=OUTPUT_DIR)
     parser.add_argument("--job-description", type=Path, default=None,
                         help="Optional JSON object with title, required_skills, responsibilities")
-    args = parser.parse_args()
+    args = parser.parse_args(argv if argv is not None else [])
     args.input_dir.mkdir(parents=True, exist_ok=True)
     args.output_dir.mkdir(parents=True, exist_ok=True)
     all_files = sorted((p for p in args.input_dir.iterdir() if p.is_file() and p.suffix.lower() in SUPPORTED), key=lambda p: p.name.casefold())
@@ -226,4 +227,4 @@ def main() -> int:
     return 0 if not failures else 1
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    raise SystemExit(main(sys.argv[1:]))

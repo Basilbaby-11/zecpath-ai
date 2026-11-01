@@ -275,6 +275,8 @@ def extract_skills(text: str) -> list[dict[str, Any]]:
                 "category": SKILL_CATEGORIES.get(canonical, "other"),
                 "requirement_type": "preferred" if preferred else "required",
                 "minimum_proficiency": None,
+                "minimum_years": None,
+                "evidence": None,
                 "confidence": (
                     0.85 if explicitly_required or preferred else 0.65
                 ),
