@@ -11,4 +11,4 @@ data/*
 *.log
 GitHub_Link.txt
 project_structure.txt
-frontend\node_modules
+frontend\node_modules/
