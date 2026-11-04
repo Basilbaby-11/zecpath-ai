@@ -470,6 +470,7 @@ def parse_experience(text: str, candidate_id: str = "CAND_UNKNOWN",
         i += 1
 
     # Attach only the lines between this role's details start and the next role header.
+        # Attach each role's description and detected skills to its record.
     for idx, record in enumerate(records):
         start_line = detail_start_indices[idx]
         end_line = (
@@ -477,19 +478,30 @@ def parse_experience(text: str, candidate_id: str = "CAND_UNKNOWN",
             if idx + 1 < len(header_indices)
             else len(lines)
         )
+
         if end_line < start_line:
             end_line = start_line
 
         details = []
+
         for line in lines[start_line:end_line]:
             if _SECTION_HEADERS.match(line):
                 break
-            # Ignore standalone date lines and other dated role headers.
+
             if _DATE_TOKEN.search(line):
                 continue
+
             cleaned_detail = line.lstrip("-•▪ ").strip()
             if cleaned_detail:
                 details.append(cleaned_detail)
+
+        description = " ".join(details)
+
+        record["description"] = description
+        record["skills_used"] = _skills_in_text(
+            description,
+            skill_inventory,
+        )
 
 
     for record in records:

@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Any
 
 
-PARSER_VERSION = "0.1.0"
+PARSER_VERSION = "0.2.0-section-aware-skills"
 
 
 ROLE_ALIASES = {
@@ -57,9 +57,13 @@ SKILL_ALIASES = {
     "flask": ["flask"],
     "react": ["react", "react.js", "reactjs"],
     "node.js": ["node.js", "nodejs", "node js"],
+    "express": ["express", "express.js", "expressjs"],
+    "rest api": ["rest api", "rest apis", "restful api", "restful apis", "api endpoint", "api endpoints"],
+    "authentication": ["authentication", "auth", "authorization", "oauth", "jwt"],
     "sql": ["sql"],
     "mysql": ["mysql"],
     "postgresql": ["postgresql", "postgres"],
+    "redis": ["redis"],
     "mongodb": ["mongodb", "mongo db"],
     "docker": ["docker"],
     "kubernetes": ["kubernetes", "k8s"],
@@ -85,6 +89,9 @@ SKILL_CATEGORIES = {
     "flask": "framework",
     "react": "framework",
     "node.js": "framework",
+    "express": "framework",
+    "rest api": "concept",
+    "authentication": "concept",
     "mysql": "tool",
     "postgresql": "tool",
     "mongodb": "tool",
@@ -154,55 +161,34 @@ def extract_title(text: str) -> str:
 
 
 def extract_experience(text: str) -> dict[str, Any]:
-    """Extract experience ranges and classify the experience level."""
+    """Extract minimum/maximum experience from common JD range formats."""
     lower = text.lower()
-    minimum_months = None
-    maximum_months = None
-    experience_level = None
+    minimum_months = maximum_months = None
 
-    # Match ranges such as "0 to 1 years of experience".
+    # Supports: 0-2 years, 0 to 2 years of experience, 6-18 months.
     range_match = re.search(
-        r"(\d+(?:\.\d+)?)\s*"
-        r"(years?|yrs?|months?|mos?)?\s*"
-        r"(?:to|-|–)\s*"
-        r"(\d+(?:\.\d+)?)\s*"
-        r"(years?|yrs?|months?|mos?)"
-        r"(?:\s+of)?\s+(?:relevant\s+)?experience",
+        r"(\d+(?:\.\d+)?)\s*(years?|yrs?|months?|mos?)?\s*"
+        r"(?:to|-|–|—)\s*(\d+(?:\.\d+)?)\s*"
+        r"(years?|yrs?|months?|mos?)",
         lower,
         re.IGNORECASE,
     )
-
     if range_match:
         first_value = float(range_match.group(1))
         first_unit = range_match.group(2) or range_match.group(4)
         second_value = float(range_match.group(3))
         second_unit = range_match.group(4)
-
-        minimum_months = round(
-            first_value * (
-                12 if first_unit.startswith(("year", "yr")) else 1
-            )
-        )
-        maximum_months = round(
-            second_value * (
-                12 if second_unit.startswith(("year", "yr")) else 1
-            )
-        )
+        minimum_months = round(first_value * (12 if first_unit.startswith(("year", "yr")) else 1))
+        maximum_months = round(second_value * (12 if second_unit.startswith(("year", "yr")) else 1))
     else:
         single_match = re.search(
-            r"(\d+(?:\.\d+)?)\s*"
-            r"(years?|yrs?|months?|mos?)"
-            r"\s+(?:of\s+)?(?:relevant\s+)?experience",
+            r"(\d+(?:\.\d+)?)\s*(years?|yrs?|months?|mos?)\s*(?:of\s+)?(?:relevant\s+)?experience",
             lower,
             re.IGNORECASE,
         )
-
         if single_match:
-            value = float(single_match.group(1))
-            unit = single_match.group(2)
-            minimum_months = round(
-                value * (12 if unit.startswith(("year", "yr")) else 1)
-            )
+            value, unit = float(single_match.group(1)), single_match.group(2)
+            minimum_months = round(value * (12 if unit.startswith(("year", "yr")) else 1))
 
     if re.search(r"\b(intern|internship)\b", lower):
         experience_level = "internship"
@@ -218,73 +204,82 @@ def extract_experience(text: str) -> dict[str, Any]:
         experience_level = "lead"
     elif re.search(r"\b(executive|director|chief)\b", lower):
         experience_level = "executive"
+    elif maximum_months is not None and maximum_months <= 24:
+        experience_level = "entry_level"
     elif minimum_months is not None:
-        experience_level = (
-            "entry_level" if minimum_months <= 12 else "other"
-        )
+        experience_level = "other"
+    else:
+        experience_level = None
 
-    return {
-        "minimum_months": minimum_months,
-        "maximum_months": maximum_months,
-        "experience_level": experience_level,
-    }
+    return {"minimum_months": minimum_months, "maximum_months": maximum_months,
+            "experience_level": experience_level}
 
 
 def extract_skills(text: str) -> list[dict[str, Any]]:
-    """Extract all recognized skills and classify their requirement type."""
-    results = []
-    seen = set()
-    sentences = re.split(r"(?<=[.!?\n])\s*", text)
+    """Extract skills while preserving inline and multi-line requirement sections."""
+    found: dict[str, dict[str, Any]] = {}
+    section_type = None
 
-    for sentence in sentences:
+    preferred_headers = re.compile(
+        r"^(?:preferred(?:\s+skills|\s+qualifications)?|nice[- ]to[- ]have(?:\s+skills)?|"
+        r"desired\s+skills|optional\s+skills)\s*:?\s*(.*)$", re.I)
+    required_headers = re.compile(
+        r"^(?:required(?:\s+technical)?\s+skills|required\s+qualifications|"
+        r"must[- ]have(?:\s+skills)?|mandatory\s+skills)\s*:?\s*(.*)$", re.I)
+    other_headers = re.compile(
+        r"^(?:responsibilities|education|experience(?:\s+level)?|qualifications|"
+        r"requirements|job description|about the role|benefits|how to apply)\s*:?\s*(.*)$", re.I)
+
+    for raw_line in text.splitlines():
+        line = raw_line.strip()
+        if not line:
+            continue
+        clean = re.sub(r"^[-*•\d.)\s]+", "", line).strip()
+
+        match = preferred_headers.match(clean)
+        if match:
+            section_type, clean = "preferred", match.group(1).strip()
+        else:
+            match = required_headers.match(clean)
+            if match:
+                section_type, clean = "required", match.group(1).strip()
+            elif other_headers.match(clean):
+                section_type, clean = None, ""
+            elif re.match(r"^[A-Z][A-Za-z /&-]{2,40}\s*:\s*$", clean):
+                # Unknown standalone heading: do not leak a previous section's type.
+                section_type, clean = None, ""
+
+        if not clean:
+            continue
+
         for canonical, aliases in SKILL_ALIASES.items():
-            if canonical in seen:
+            if not any(re.search(r"(?<![\w])" + re.escape(alias) + r"(?![\w])", clean, re.I)
+                       for alias in aliases):
                 continue
-
-            found = False
-            for alias in aliases:
-                if re.search(
-                    r"\b" + re.escape(alias) + r"\b",
-                    sentence,
-                    re.IGNORECASE,
-                ):
-                    found = True
-                    break
-
-            if not found:
+            preferred_cue = bool(re.search(
+                r"\b(preferred|preferably|nice to have|good to have|bonus|desirable)\b", clean, re.I))
+            required_cue = bool(re.search(
+                r"\b(required|must have|mandatory|essential)\b", clean, re.I))
+            requirement_type = "preferred" if preferred_cue else (
+                "required" if required_cue else section_type or "required")
+            existing = found.get(canonical)
+            # A preferred mention elsewhere must not downgrade an explicit required mention.
+            if existing and existing["requirement_type"] == "required":
                 continue
-
-            preferred = bool(
-                re.search(
-                    r"\b(preferred|preferably|nice to have|"
-                    r"good to have|bonus|desirable)\b",
-                    sentence,
-                    re.IGNORECASE,
-                )
-            )
-            explicitly_required = bool(
-                re.search(
-                    r"\b(required|must have|mandatory|essential)\b",
-                    sentence,
-                    re.IGNORECASE,
-                )
-            )
-
-            results.append({
+            if existing and requirement_type == "required":
+                existing["requirement_type"] = "required"
+                existing["evidence"] = clean[:500]
+                continue
+            found[canonical] = {
                 "name": canonical,
                 "category": SKILL_CATEGORIES.get(canonical, "other"),
-                "requirement_type": "preferred" if preferred else "required",
+                "requirement_type": requirement_type,
                 "minimum_proficiency": None,
                 "minimum_years": None,
-                "evidence": None,
-                "confidence": (
-                    0.85 if explicitly_required or preferred else 0.65
-                ),
-            })
-            seen.add(canonical)
-
-    return results
-
+                "evidence": clean[:500],
+                "confidence": 0.85 if preferred_cue or required_cue or section_type else 0.65,
+            }
+    return list(found.values())
 
 
 def extract_responsibilities(text: str) -> list[str]:
@@ -386,9 +381,23 @@ def extract_education(text: str) -> list[dict[str, Any]]:
             )
         )
 
+        field_of_study = []
+        field_match = re.search(
+            r"\b(?:degree\s+in|in)\s+(.+?)(?=\s+(?:or equivalent|or related|with|preferred|required)\b|[.;]|$)",
+            sentence,
+            re.IGNORECASE,
+        )
+        if field_match:
+            field_text = field_match.group(1).strip(" :-")
+            field_of_study = [
+                part.strip()
+                for part in re.split(r"\s*(?:/|,|\bor\b|\band\b)\s*", field_text, flags=re.I)
+                if part.strip()
+            ]
+
         requirements.append({
             "qualification": qualification,
-            "field_of_study": [],
+            "field_of_study": field_of_study,
             "mandatory": mandatory,
         })
 
