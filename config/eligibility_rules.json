@@ -1,0 +1,26 @@
+{
+  "default": {
+    "minimum_ats_score": 70,
+    "review_ats_score": 55,
+    "mandatory_skills": [],
+    "use_job_required_skills": true,
+    "minimum_experience_months": null,
+    "maximum_experience_months": null,
+    "allowed_locations": [],
+    "require_location_match": false,
+    "required_availability": null
+  },
+  "roles": {
+    "AI Engineer": {
+      "minimum_ats_score": 72,
+      "review_ats_score": 55,
+      "mandatory_skills": ["Python"]
+    },
+    "Python Developer": {
+      "minimum_ats_score": 68,
+      "review_ats_score": 50,
+      "mandatory_skills": ["Python"]
+    }
+  },
+  "job_overrides": {}
+}
