@@ -131,7 +131,15 @@ def _clean_header(line: str) -> str:
 def _parse_header(line: str) -> tuple[str | None, str | None]:
     # A prose sentence ending in punctuation is not an employment header,
     # even if it contains a role keyword such as "project manager".
-    if re.search(r"[.!?]$", line.strip()):
+    # Reject prose sentences, but allow company suffixes such as Pvt. Ltd.
+    if re.search(r"[!?]$", line.strip()):
+        return None, None
+
+    if re.search(r"\.$", line.strip()) and not re.search(
+        r"\b(?:Ltd|Inc|Co|Corp|Pvt)\.$",
+        line.strip(),
+        re.IGNORECASE,
+    ):
         return None, None
     cleaned = _clean_header(line)
     parts = [re.sub(r"\s+", " ", p).strip(" ,|()[]") for p in re.split(r"\s*[|@]\s*|\s+at\s+|\s*,\s*", cleaned, flags=re.I)]
