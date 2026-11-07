@@ -31,7 +31,7 @@ def test_shortlist_uses_repository_ranking_and_classification():
             ShortlistCandidate(candidate_id="CAND-3", overall_score=None),
         ],
         top_n=3,
-        shortlist_threshold=75,
+        shortlist_threshold=70,
         review_threshold=50,
     )
     result = build_shortlist("JOB-TEST", payload)
