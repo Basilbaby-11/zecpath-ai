@@ -162,6 +162,8 @@ def parse_resume_adapter(resume_record: dict[str, Any]) -> dict[str, Any]:
         "skills": [x.get("name") for x in skills], "skill_entities": skills,
         "education": education.get("education", []),
         "experience": experience.get("experiences", experience.get("experience", [])),
+        # Use the experience parser's overlap-aware aggregate; do not sum role durations here.
+        "total_experience_months": experience.get("total_experience_months"),
         "certifications": education.get("certifications", []),
         "source_document": extracted.get("source_document"),
         "file_type": extracted.get("file_type"), "extraction_status": "success",
@@ -416,6 +418,30 @@ async def shortlist(job_id: str, payload: ShortlistRequest):
     task_id = create_task("shortlist", job_id=job_id)
     asyncio.create_task(run_task(task_id, build_shortlist, job_id, payload))
     return {"task_id": task_id, "job_id": job_id, "status": "queued"}
+
+
+@app.get(f"{API_PREFIX}/jobs/{{job_id}}/candidates/{{candidate_id}}/eligibility")
+async def get_candidate_eligibility(job_id: str, candidate_id: str):
+    """Evaluate an existing ATS result against recruiter-configured job rules."""
+    from eligibility.eligibility_engine import evaluate_eligibility, load_eligibility_rules
+
+    job_record = JOBS.get(job_id)
+    if not job_record:
+        raise HTTPException(404, detail={"code": "JOB_NOT_FOUND", "message": "The requested job does not exist."})
+    ats_result = CANDIDATE_SCORES.get((candidate_id, job_id))
+    if ats_result is None:
+        raise HTTPException(404, detail={"code": "ATS_SCORE_NOT_FOUND", "message": "No ATS score exists for this candidate and job."})
+    profiles = [r.get("parsed_profile") for r in RESUMES.values()
+                if r.get("candidate_id") == candidate_id and r.get("job_id") == job_id and r.get("parsed_profile")]
+    if not profiles:
+        raise HTTPException(404, detail={"code": "CANDIDATE_PROFILE_NOT_FOUND", "message": "No parsed candidate profile exists for this job."})
+    config_path = Path(__file__).resolve().parents[1] / "config" / "eligibility_rules.json"
+    rules = load_eligibility_rules(config_path) if config_path.is_file() else load_eligibility_rules()
+    decision = evaluate_eligibility(
+        candidate=profiles[-1], ats_result=ats_result,
+        job={**job_record["parsed"], "job_id": job_id}, rules_config=rules,
+    )
+    return decision
 
 
 @app.get(f"{API_PREFIX}/candidates")

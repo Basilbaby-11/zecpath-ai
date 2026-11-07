@@ -70,7 +70,7 @@ export default function App(){
   const [jobForm,setJobForm]=useState({title:"",description:"",job_id:"",file:null});
   const [uploadForm,setUploadForm]=useState({candidate_id:"CAND-021",file:null,job_id:""});
   const [scoreForm,setScoreForm]=useState({candidate_id:"",job_id:""});
-  const [shortlistForm,setShortlistForm]=useState({job_id:"",top_n:5,shortlist_threshold:75,review_threshold:50});
+  const [shortlistForm,setShortlistForm]=useState({job_id:"",top_n:5,shortlist_threshold:70,review_threshold:50});
   const [ranking,setRanking]=useState(null);
   const [taskLog,setTaskLog]=useState([]);
   const [loadingCandidates,setLoadingCandidates]=useState(false);
