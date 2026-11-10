@@ -1,0 +1,357 @@
+[
+    {
+        "audio_file": "candidate_answer.wav",
+        "question": "Tell me about your technical experience.",
+        "stt_result": {
+            "text": "In my final year project, I developed a hybrid synthetic data evaluation system. The main goal was to generate synthetic tabular data, and evaluate whether it preserved the important statistical properties of the original dataset. I worked with Python, CT-Can, and the synthetic data vault library. I compared the generated data using statistical similarity, and machine learning utility metrics. The main challenge was balancing privacy and data usefulness, because synthetic data should not simply reproduce the original records. I addressed this by testing different configurations, and documenting the evaluation results. This project helped me understand the complete machine learning workflow, from data preparation to model evaluation.",
+            "language": "en",
+            "segments": [
+                {
+                    "text": "In my final year project, I developed a hybrid synthetic data evaluation system.",
+                    "start": 0.0,
+                    "end": 6.2
+                },
+                {
+                    "text": "The main goal was to generate synthetic tabular data, and evaluate whether it preserved the",
+                    "start": 6.2,
+                    "end": 11.84
+                },
+                {
+                    "text": "important statistical properties of the original dataset.",
+                    "start": 11.84,
+                    "end": 15.88
+                },
+                {
+                    "text": "I worked with Python, CT-Can, and the synthetic data vault library.",
+                    "start": 15.88,
+                    "end": 21.52
+                },
+                {
+                    "text": "I compared the generated data using statistical similarity, and machine learning utility metrics.",
+                    "start": 21.52,
+                    "end": 28.56
+                },
+                {
+                    "text": "The main challenge was balancing privacy and data usefulness, because synthetic data should",
+                    "start": 28.56,
+                    "end": 34.08
+                },
+                {
+                    "text": "not simply reproduce the original records.",
+                    "start": 34.08,
+                    "end": 37.04
+                },
+                {
+                    "text": "I addressed this by testing different configurations, and documenting the evaluation results.",
+                    "start": 37.04,
+                    "end": 43.72
+                },
+                {
+                    "text": "This project helped me understand the complete machine learning workflow, from data preparation",
+                    "start": 43.72,
+                    "end": 49.68
+                },
+                {
+                    "text": "to model evaluation.",
+                    "start": 49.68,
+                    "end": 51.2
+                }
+            ],
+            "confidence_score": null,
+            "silence_detected": false
+        },
+        "understanding_result": {
+            "intent": "experience",
+            "intents": [
+                "experience",
+                "skills"
+            ],
+            "entities": {
+                "skills": [
+                    "Python",
+                    "Machine Learning"
+                ],
+                "experience": null,
+                "availability": null,
+                "salary_expectation": null
+            },
+            "is_off_topic": false,
+            "is_complete": false,
+            "is_vague": false,
+            "missing_fields": [
+                "experience"
+            ],
+            "follow_up_question": "How many months or years of experience do you have?",
+            "confidence": null,
+            "metadata": {
+                "engine": "hybrid_semantic_v2",
+                "expected_intents": [
+                    "experience"
+                ],
+                "transcript_metadata": {
+                    "turn_id": "478435c0-4346-465d-b5ae-57430f2dc5c7",
+                    "sequence_no": 1,
+                    "speaker": "candidate",
+                    "question_id": "candidate_answer",
+                    "language": "en",
+                    "timestamp": "2026-11-09T19:38:03.238331Z",
+                    "confidence_score": null,
+                    "confidence_source": null,
+                    "completion_status": "complete",
+                    "text": "In my final year project, I developed a hybrid synthetic data evaluation system. The main goal was to generate synthetic tabular data, and evaluate whether it preserved the important statistical properties of the original dataset. I worked with Python, CT-Can, and the synthetic data vault library. I compared the generated data using statistical similarity, and machine learning utility metrics. The main challenge was balancing privacy and data usefulness, because synthetic data should not simply reproduce the original records. I addressed this by testing different configurations, and documenting the evaluation results. This project helped me understand the complete machine learning workflow, from data preparation to model evaluation.",
+                    "segments": [
+                        {
+                            "text": "In my final year project, I developed a hybrid synthetic data evaluation system.",
+                            "start": 0.0,
+                            "end": 6.2
+                        },
+                        {
+                            "text": "The main goal was to generate synthetic tabular data, and evaluate whether it preserved the",
+                            "start": 6.2,
+                            "end": 11.84
+                        },
+                        {
+                            "text": "important statistical properties of the original dataset.",
+                            "start": 11.84,
+                            "end": 15.88
+                        },
+                        {
+                            "text": "I worked with Python, CT-Can, and the synthetic data vault library.",
+                            "start": 15.88,
+                            "end": 21.52
+                        },
+                        {
+                            "text": "I compared the generated data using statistical similarity, and machine learning utility metrics.",
+                            "start": 21.52,
+                            "end": 28.56
+                        },
+                        {
+                            "text": "The main challenge was balancing privacy and data usefulness, because synthetic data should",
+                            "start": 28.56,
+                            "end": 34.08
+                        },
+                        {
+                            "text": "not simply reproduce the original records.",
+                            "start": 34.08,
+                            "end": 37.04
+                        },
+                        {
+                            "text": "I addressed this by testing different configurations, and documenting the evaluation results.",
+                            "start": 37.04,
+                            "end": 43.72
+                        },
+                        {
+                            "text": "This project helped me understand the complete machine learning workflow, from data preparation",
+                            "start": 43.72,
+                            "end": 49.68
+                        },
+                        {
+                            "text": "to model evaluation.",
+                            "start": 49.68,
+                            "end": 51.2
+                        }
+                    ],
+                    "stt_source": "day24_stt_provider",
+                    "source": "day24_stt_result",
+                    "interrupted": false,
+                    "partial": false,
+                    "silence_detected": false
+                },
+                "semantic_scores": {
+                    "skills": 0.41813592874572136,
+                    "experience": 0.1868835634337642,
+                    "availability": 0.016166483576042712,
+                    "salary_expectation": 0.08502032280718047
+                },
+                "semantic_enabled": true,
+                "turn_eligible_for_final_answer": true
+            }
+        },
+        "status": "success"
+    },
+    {
+        "audio_file": "short_answer.wav",
+        "question": "What programming languages do you know?",
+        "stt_result": {
+            "text": "I know Python.",
+            "language": "en",
+            "segments": [
+                {
+                    "text": "I know Python.",
+                    "start": 0.0,
+                    "end": 1.0
+                }
+            ],
+            "confidence_score": null,
+            "silence_detected": false
+        },
+        "understanding_result": {
+            "intent": "skills",
+            "intents": [
+                "skills"
+            ],
+            "entities": {
+                "skills": [
+                    "Python"
+                ],
+                "experience": null,
+                "availability": null,
+                "salary_expectation": null
+            },
+            "is_off_topic": false,
+            "is_complete": true,
+            "is_vague": false,
+            "missing_fields": [],
+            "follow_up_question": null,
+            "confidence": null,
+            "metadata": {
+                "engine": "hybrid_semantic_v2",
+                "expected_intents": [
+                    "skills"
+                ],
+                "transcript_metadata": {
+                    "turn_id": "e727c41b-b8aa-4c54-b087-60611b1cd3a7",
+                    "sequence_no": 1,
+                    "speaker": "candidate",
+                    "question_id": "short_answer",
+                    "language": "en",
+                    "timestamp": "2026-11-09T19:39:03.660542Z",
+                    "confidence_score": null,
+                    "confidence_source": null,
+                    "completion_status": "complete",
+                    "text": "I know Python.",
+                    "segments": [
+                        {
+                            "text": "I know Python.",
+                            "start": 0.0,
+                            "end": 1.0
+                        }
+                    ],
+                    "stt_source": "day24_stt_provider",
+                    "source": "day24_stt_result",
+                    "interrupted": false,
+                    "partial": false,
+                    "silence_detected": false
+                },
+                "semantic_scores": {
+                    "skills": 0.603238648262804,
+                    "experience": 0.20110322895795008,
+                    "availability": 0.015566129849410975,
+                    "salary_expectation": 0.14934641782279162
+                },
+                "semantic_enabled": true,
+                "turn_eligible_for_final_answer": true
+            }
+        },
+        "status": "success"
+    },
+    {
+        "audio_file": "unclear_answer.wav",
+        "question": "Describe a technical project you worked on.",
+        "stt_result": {
+            "text": "Er, so, I worked on, erm, a machine learning project. Basically, we had to clean the data first, and then, you know, train the model. I think the main challenge was, er, missing values, and some inconsistent records. So, yeah, I tried a few approaches, and then we compared the results before choosing the final one.",
+            "language": "en",
+            "segments": [
+                {
+                    "text": "Er, so, I worked on, erm, a machine learning project.",
+                    "start": 0.0,
+                    "end": 4.74
+                },
+                {
+                    "text": "Basically, we had to clean the data first, and then, you know, train the model.",
+                    "start": 4.74,
+                    "end": 11.1
+                },
+                {
+                    "text": "I think the main challenge was, er, missing values, and some inconsistent records.",
+                    "start": 11.1,
+                    "end": 17.5
+                },
+                {
+                    "text": "So, yeah, I tried a few approaches, and then we compared the results before choosing the final one.",
+                    "start": 17.5,
+                    "end": 25.0
+                }
+            ],
+            "confidence_score": null,
+            "silence_detected": false
+        },
+        "understanding_result": {
+            "intent": "skills",
+            "intents": [
+                "skills",
+                "experience"
+            ],
+            "entities": {
+                "skills": [
+                    "Machine Learning"
+                ],
+                "experience": null,
+                "availability": null,
+                "salary_expectation": null
+            },
+            "is_off_topic": false,
+            "is_complete": false,
+            "is_vague": false,
+            "missing_fields": [
+                "experience"
+            ],
+            "follow_up_question": "How many months or years of experience do you have?",
+            "confidence": null,
+            "metadata": {
+                "engine": "hybrid_semantic_v2",
+                "expected_intents": [
+                    "experience"
+                ],
+                "transcript_metadata": {
+                    "turn_id": "19014b9f-613a-4975-89cf-86bb9b46cceb",
+                    "sequence_no": 1,
+                    "speaker": "candidate",
+                    "question_id": "unclear_answer",
+                    "language": "en",
+                    "timestamp": "2026-11-09T19:39:11.304447Z",
+                    "confidence_score": null,
+                    "confidence_source": null,
+                    "completion_status": "complete",
+                    "text": "Er, so, I worked on, erm, a machine learning project. Basically, we had to clean the data first, and then, you know, train the model. I think the main challenge was, er, missing values, and some inconsistent records. So, yeah, I tried a few approaches, and then we compared the results before choosing the final one.",
+                    "segments": [
+                        {
+                            "text": "Er, so, I worked on, erm, a machine learning project.",
+                            "start": 0.0,
+                            "end": 4.74
+                        },
+                        {
+                            "text": "Basically, we had to clean the data first, and then, you know, train the model.",
+                            "start": 4.74,
+                            "end": 11.1
+                        },
+                        {
+                            "text": "I think the main challenge was, er, missing values, and some inconsistent records.",
+                            "start": 11.1,
+                            "end": 17.5
+                        },
+                        {
+                            "text": "So, yeah, I tried a few approaches, and then we compared the results before choosing the final one.",
+                            "start": 17.5,
+                            "end": 25.0
+                        }
+                    ],
+                    "stt_source": "day24_stt_provider",
+                    "source": "day24_stt_result",
+                    "interrupted": false,
+                    "partial": false,
+                    "silence_detected": false
+                },
+                "semantic_scores": {
+                    "skills": 0.23091930865760563,
+                    "experience": 0.12943946267663348,
+                    "availability": 0.0534638517268208,
+                    "salary_expectation": 0.07471564768768102
+                },
+                "semantic_enabled": true,
+                "turn_eligible_for_final_answer": true
+            }
+        },
+        "status": "success"
+    }
+]
